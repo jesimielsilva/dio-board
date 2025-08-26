@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="card shadow-none" style="padding:18px 20px; display:flex; align-items:center; gap:14px;">
+    <h2 style="font-size:1.75rem; font-weight:800; margin:0;">Sistema de Boards</h2>
+
+    <div style="display:flex; align-items:center; gap:10px; margin-left:24px;">
+      <label for="boardSelect" style="color:var(--muted); font-weight:600;">Board Atual:</label>
+      <select id="boardSelect" class="select" style="min-width:260px"
+              [(ngModel)]="boardSelecionado" (change)="selecionarBoard()">
+        <option disabled [ngValue]="null">Selecione um board</option>
+        <option *ngFor="let b of boards" [value]="b.id">{{ b.nome }}</option>
+      </select>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" (click)="abrirGerenciarColunas()">Gerenciar Colunas</button>
+
+    <button class="btn btn-primary" style="margin-left:auto" (click)="abrirModalBoard()">
+      + Novo Board
+    </button>
+  </div>
+
+  <app-tela-board class="mt-4" *ngIf="boardAtual"
+      [board]="boardAtual"
+      (click)="abrirModalCard()">
+  </app-tela-board>
+
+  <!-- Modal Novo Board -->
+  <app-board-modal
+    *ngIf="showBoardModal"
+    (close)="fecharModalBoard()"
+    (save)="salvarBoard($event)">
+  </app-board-modal>
+
+  <!-- Modal Novo Card -->
+  <app-card-modal
+    *ngIf="showCardModal"
+    (close)="fecharModalCard()"
+    (save)="salvarCard($event)">
+  </app-card-modal>
+</div>

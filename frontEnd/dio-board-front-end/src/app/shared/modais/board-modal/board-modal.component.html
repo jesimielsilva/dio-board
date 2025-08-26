@@ -1,0 +1,12 @@
+<div class="modal-overlay" *ngIf="isOpen">
+  <div class="modal-content">
+    <div class="modal-header">Criar Novo Board</div>
+    
+    <input type="text" placeholder="Nome do Board" [(ngModel)]="boardName" />
+
+    <div class="modal-actions">
+      <button class="primary" (click)="createBoard()">Criar</button>
+      <button class="secondary" (click)="close()">Cancelar</button>
+    </div>
+  </div>
+</div>

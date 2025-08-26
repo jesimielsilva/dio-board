@@ -2,6 +2,9 @@ package com.github.jesimielsilva.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "colunas")
 public class Coluna {
@@ -33,16 +36,38 @@ public class Coluna {
     }
 
     // ---------- getters e setters ----------
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public Long getId() {
+        return id;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-    public int getOrdem() { return ordem; }
-    public void setOrdem(int ordem) { this.ordem = ordem; }
+    public int getOrdem() {
+        return ordem;
+    }
+    public void setOrdem(int ordem) {
+        this.ordem = ordem;
+    }
 
-    public TipoColuna getTipo() { return tipo; }
-    public void setTipo(TipoColuna tipo) { this.tipo = tipo; }
+    public TipoColuna getTipo() {
+        return tipo;
+    }
+    public void setTipo(TipoColuna tipo) {
+        this.tipo = tipo;
+    }
 
-    public Board getBoard() { return board; }
-    public void setBoard(Board board) { this.board = board; }
+    public Board getBoard() {
+        return board;
+    }
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    @OneToMany(mappedBy = "coluna", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
+
 }

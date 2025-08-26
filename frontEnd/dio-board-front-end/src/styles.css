@@ -1,0 +1,101 @@
+/* You can add global styles to this file, and also import other style files */
+/* ---------- Variáveis (cores/medidas) ---------- */
+:root{
+  --bg-1:#f6f8ff;
+  --bg-2:#eef3ff;
+  --surface:#ffffff;
+  --text:#1f2937;        /* slate-800 */
+  --muted:#6b7280;       /* slate-500 */
+  --line:#e5e7eb;        /* slate-200 */
+  --brand:#2563eb;       /* blue-600 */
+  --brand-700:#1d4ed8;
+  --neutral:#374151;     /* gray-700 */
+  --good:#16a34a;        /* green-600 */
+  --warn:#f59e0b;        /* amber-500 */
+  --danger:#ef4444;      /* red-500 */
+  --radius:16px;
+  --shadow:0 10px 25px rgba(2,6,23,.06);
+  --ring:0 0 0 4px rgba(37,99,235,.25); /* brand focus ring */
+}
+
+*{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  color:var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  background:
+    radial-gradient(1200px 600px at 50% -100px, #e9f0ff 0, transparent 60%),
+    linear-gradient(180deg,var(--bg-1) 0,var(--bg-2) 38%, #eaf0ff 100%);
+}
+
+/* ---------- Utilitários ---------- */
+.container{ padding:24px; }
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.shadow-none{ box-shadow:none !important; }
+
+.select, .input, .textarea{
+  width:100%;
+  background:#fff;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:10px 12px;
+  font:inherit;
+  color:var(--text);
+  transition: .15s border-color ease, .15s box-shadow ease;
+}
+.textarea{ min-height:110px; resize:vertical; }
+.select:focus, .input:focus, .textarea:focus{ outline:none; border-color:var(--brand); box-shadow:var(--ring); }
+
+.btn{
+  --bg:var(--neutral);
+  --bg-h: #111827;
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; border:0; cursor:pointer;
+  color:#fff; background:var(--bg); border-radius:12px;
+  padding:10px 16px; font-weight:600; transition: .15s transform ease, .15s background ease, .15s box-shadow ease;
+  box-shadow:var(--shadow);
+}
+.btn:hover{ transform:translateY(-1px); }
+.btn:focus-visible{ outline:none; box-shadow:var(--ring); }
+.btn-primary{ --bg:var(--brand); }
+.btn-primary:hover{ background:var(--brand-700); }
+.btn-ghost{ background:#f3f4f6; color:#111827; }
+.btn-success{ --bg:var(--good); }
+.btn-danger{ --bg:var(--danger); }
+.btn-sm{ padding:8px 12px; border-radius:10px; font-size:.9rem; }
+
+/* ---------- Badges ---------- */
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:999px; font-size:.75rem; font-weight:700;
+}
+.badge--Inicial{ color:#1e3a8a; background:#dbeafe; }
+.badge--Pendente{ color:#1f2937; background:#e5e7eb; }
+.badge--Final{ color:#065f46; background:#d1fae5; }
+.badge--Cancelamento{ color:#7c2d12; background:#ffedd5; }
+
+/* ---------- Modal (genérico) ---------- */
+.modal-backdrop{
+  position:fixed; inset:0; background:rgba(8,15,35,.45);
+  display:flex; align-items:center; justify-content:center; z-index:50;
+}
+.modal{
+  width:min(520px, calc(100% - 32px));
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:18px; box-shadow:0 25px 80px rgba(2,6,23,.25);
+  padding:20px;
+  animation:pop .16s ease;
+}
+.modal__title{ font-size:1.125rem; font-weight:800; margin:4px 0 16px; }
+.modal__actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:16px; }
+@keyframes pop{ from{ transform:scale(.98); opacity:0 } to{ transform:scale(1); opacity:1 } }
+
+/* ---------- Cores do CDK drag (opcional) ---------- */
+.cdk-drag-preview{ box-shadow:0 12px 30px rgba(2,6,23,.15); border-radius:14px; }
+.cdk-drop-list-dragging .kanban-card{ opacity:.6; }

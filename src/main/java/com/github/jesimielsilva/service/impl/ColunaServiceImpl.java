@@ -9,6 +9,7 @@ import com.github.jesimielsilva.service.ColunaService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,48 +22,42 @@ public class ColunaServiceImpl implements ColunaService {
         this.boardRepository = boardRepository;
     }
 
-    @Override
     @Transactional
+    @Override
     public Coluna criarColuna(Coluna coluna) {
-        if (coluna.getBoard() == null) {
-            throw new IllegalArgumentException("Coluna precisa estar vinculada a um Board.");
+        Board board;
+
+        if (coluna.getBoard() == null || coluna.getBoard().getId() == null) {
+            // cria board default
+            board = new Board();
+            board.setNome("Board Padrão");
+            board = boardRepository.save(board);
+        } else {
+            board = boardRepository.findById(coluna.getBoard().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Board não encontrado"));
         }
 
-        Board board = boardRepository.findById(coluna.getBoard().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Board não encontrado"));
-
-        // Verifica quantas colunas já existem
         List<Coluna> colunas = board.getColunas();
 
-        // Regra: apenas 1 INICIAL
+        // Valida regras de tipo único
         if (coluna.getTipo() == TipoColuna.INICIAL &&
                 colunas.stream().anyMatch(c -> c.getTipo() == TipoColuna.INICIAL)) {
             throw new IllegalArgumentException("O board já possui uma coluna INICIAL.");
         }
-
-        // Regra: apenas 1 FINAL
         if (coluna.getTipo() == TipoColuna.FINAL &&
                 colunas.stream().anyMatch(c -> c.getTipo() == TipoColuna.FINAL)) {
             throw new IllegalArgumentException("O board já possui uma coluna FINAL.");
         }
-
-        // Regra: apenas 1 CANCELAMENTO
         if (coluna.getTipo() == TipoColuna.CANCELAMENTO &&
                 colunas.stream().anyMatch(c -> c.getTipo() == TipoColuna.CANCELAMENTO)) {
             throw new IllegalArgumentException("O board já possui uma coluna de CANCELAMENTO.");
         }
 
-        // ======= Ordem das colunas =======
-        if (coluna.getTipo() == TipoColuna.INICIAL) {
-            coluna.setOrdem(1); // sempre primeira
-        } else if (coluna.getTipo() == TipoColuna.FINAL) {
-            coluna.setOrdem(colunas.size() + 1); // será penúltima
-        } else if (coluna.getTipo() == TipoColuna.CANCELAMENTO) {
-            coluna.setOrdem(colunas.size() + 2); // sempre última
-        } else { // PENDENTE
-            // inserimos no meio (depois da inicial e antes do final/cancelamento)
-            coluna.setOrdem(colunas.size() + 1);
-        }
+        // Define ordem
+        if (coluna.getTipo() == TipoColuna.INICIAL) coluna.setOrdem(1);
+        else if (coluna.getTipo() == TipoColuna.FINAL) coluna.setOrdem(colunas.size() + 1);
+        else if (coluna.getTipo() == TipoColuna.CANCELAMENTO) coluna.setOrdem(colunas.size() + 2);
+        else coluna.setOrdem(colunas.size() + 1); // PENDENTE
 
         coluna.setBoard(board);
         return colunaRepository.save(coluna);
@@ -70,8 +65,9 @@ public class ColunaServiceImpl implements ColunaService {
 
     @Override
     public List<Coluna> listarColunasPorBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("Board não encontrado"));
-        return board.getColunas();
+        return boardRepository.findById(boardId)
+                .map(Board::getColunas)
+                .orElse(new ArrayList<>());
     }
+
 }
