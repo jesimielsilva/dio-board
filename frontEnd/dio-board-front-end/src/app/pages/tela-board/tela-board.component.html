@@ -1,0 +1,39 @@
+<div class="board-wrapper card" style="padding:22px;">
+  <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+    <h3 style="font-size:1.35rem; font-weight:800; margin:0;">{{ board.nome }}</h3>
+    <div style="margin-left:auto;">
+      <button class="btn btn-success" (click)="novoCard.emit(board)">+ Novo Card</button>
+    </div>
+  </div>
+
+  <div class="columns">
+    <!-- coluna -->
+    <div *ngFor="let col of board.colunas" class="column">
+      <div class="column__header">
+        <div class="column__title">{{ col.nome }}</div>
+        <span class="badge"
+              [ngClass]="'badge--' + col.tipo">
+          {{ col.tipo }}
+        </span>
+      </div>
+
+      <div class="column__body cdk-drop-list"
+           [id]="'col-' + col.id"
+           cdkDropList
+           (cdkDropListDropped)="onDrop($event, col)">
+        <!-- card -->
+        <div *ngFor="let card of col.cards"
+             class="kanban-card"
+             cdkDrag
+             [class.locked]="card.bloqueado"
+             (click)="abrirDetalhesCard(card, col)">
+          <div class="card__title">{{ card.titulo }}</div>
+          <div class="card__desc">{{ card.descricao }}</div>
+          <div class="card__meta">Criado em: {{ card.dataCriacao | date:'dd/MM/yyyy' }}</div>
+
+          <div class="card__lock" *ngIf="card.bloqueado" title="Bloqueado">🔒</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

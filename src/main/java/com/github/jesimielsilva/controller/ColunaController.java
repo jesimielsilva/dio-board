@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/colunas")
+@CrossOrigin(origins = "*")
 public class ColunaController {
 
     private final ColunaService colunaService;

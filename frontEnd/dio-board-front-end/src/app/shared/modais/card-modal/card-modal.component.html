@@ -1,0 +1,13 @@
+<div class="modal-overlay" *ngIf="isOpen">
+  <div class="modal-content">
+    <div class="modal-header">Criar Novo Card</div>
+    
+    <input type="text" placeholder="Título do Card" [(ngModel)]="cardTitle" />
+    <textarea placeholder="Descrição do Card" [(ngModel)]="cardDescription"></textarea>
+
+    <div class="modal-actions">
+      <button class="success" (click)="createCard()">Criar</button>
+      <button class="secondary" (click)="close()">Cancelar</button>
+    </div>
+  </div>
+</div>
