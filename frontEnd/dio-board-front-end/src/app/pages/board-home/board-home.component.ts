@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Board } from 'src/app/core/models/board.model';
+import { Board, Card, Coluna } from 'src/app/core/models/board.model';
+import { BoardService } from 'src/app/core/services/board.service';
 
 @Component({
   selector: 'app-board-home',
@@ -8,94 +9,117 @@ import { Board } from 'src/app/core/models/board.model';
   styleUrls: ['./board-home.component.css']
 })
 export class BoardHomeComponent {
-abrirCriarCard($event: Board) {
-throw new Error('Method not implemented.');
-}
-boardSelecionado: any;
-boards: any;
-boardAtual!: Board;
-selecionarBoard() {
-throw new Error('Method not implemented.');
-}
-abrirGerenciarColunas() {
-throw new Error('Method not implemented.');
-}
-abrirCriarBoard() {
-throw new Error('Method not implemented.');
-}
+  
+  boards: Board[] = [];
+  boardAtual: Board | null = null;
+  boardSelecionado: number | null = null;
 
-
-  colunas: any[] = [];
+  colunas: Coluna[] = [];
 
   novoCardTitulo = '';
   novoCardDescricao = '';
-  novoNome: any;
-  novoTipo!: string;
+  novoColunaNome = '';
+  novoColunaTipo = '';
+
   showBoardModal = false;
   showCardModal = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private boardService: BoardService
+  ) {}
 
   ngOnInit(): void {
-    this.carregarColunas();
+    this.carregarBoards();
   }
 
-  carregarColunas() {
-    const boardId = 1; // estamos usando o board 1 como exemplo
-    this.http.get<any[]>(`http://localhost:8080/api/colunas/board/${boardId}`)
-      .subscribe(data => this.colunas = data);
+  // -------- Boards --------
+  carregarBoards() {
+    this.boardService.getBoards().subscribe(data => {
+      this.boards = data;
+      if (data.length > 0) {
+        this.boardSelecionado = data[0].id!;
+        this.selecionarBoard();
+      }
+    });
   }
 
-   abrirModalBoard() {
-    this.showBoardModal = true;
+  selecionarBoard() {
+    if (this.boardSelecionado) {
+      this.boardService.getBoardById(this.boardSelecionado).subscribe(board => {
+        this.boardAtual = board;
+        this.colunas = board.colunas || [];
+      });
+    }
   }
 
-  fecharModalBoard() {
-    this.showBoardModal = false;
-  }
+  salvarBoard(board: Board) {
+    // já vem do backend com id correto
+    // adiciona colunas padrão
+    board.colunas = [
+      { nome: 'A Fazer', ordem: 1, tipo: 'Inicial', cards: [] },
+      { nome: 'Em Progresso', ordem: 2, tipo: 'Pendente', cards: [] },
+      { nome: 'Concluído', ordem: 3, tipo: 'Final', cards: [] },
+      { nome: 'Cancelado', ordem: 4, tipo: 'Cancelamento', cards: [] }
+    ];
 
-  abrirModalCard() {
-    this.showCardModal = true;
-  }
-
-  fecharModalCard() {
-    this.showCardModal = false;
-  }
-
-  salvarBoard(boardName: string) {
-    console.log('Novo Board:', boardName);
+    this.boards.push(board);
+    this.boardSelecionado = board.id!;
+    this.boardAtual = board;
+    this.colunas = board.colunas;
     this.fecharModalBoard();
-    // aqui depois você integra com service/api
   }
 
-  salvarCard(cardData: { titulo: string; descricao: string }) {
-    console.log('Novo Card:', cardData);
-    this.fecharModalCard();
-    // aqui depois você integra com service/api
-  }
 
-  criarCard(colunaId: number) {
-    if (!this.novoCardTitulo) return;
+  // -------- Colunas --------
+  criarColuna(nome: string, tipo: string) {
+    if (!this.boardAtual) return;
 
-    const card = {
-      titulo: this.novoCardTitulo,
-      descricao: this.novoCardDescricao
+    const coluna: Coluna = {
+      nome,
+      tipo: tipo as Coluna['tipo'],
+      ordem: this.colunas.length + 1,
+      cards: []
     };
 
-    this.http.post(`http://localhost:8080/api/cards/coluna/${colunaId}`, card)
-      .subscribe(() => {
-        this.novoCardTitulo = '';
-        this.novoCardDescricao = '';
-        this.carregarColunas(); // atualiza a coluna com o novo card
+    this.http.post<Coluna>(`http://localhost:8080/api/colunas`, { ...coluna, boardId: this.boardAtual.id })
+      .subscribe(colunaCriada => {
+        this.colunas.push(colunaCriada);
       });
   }
 
-  criarColuna(nome: string, tipo: string) {
-    const boardId = 1; // pode gerar dinamicamente depois
-    const coluna = { nome, tipo, ordem: this.colunas.length + 1, boardId };
+  // -------- Cards --------
+  criarCard(colunaId: number) {
+    if (!this.novoCardTitulo.trim()) return;
 
-    this.http.post('http://localhost:8080/api/colunas', coluna)
-      .subscribe(() => this.carregarColunas());
+    const card: Partial<Card> = {
+      titulo: this.novoCardTitulo,
+      descricao: this.novoCardDescricao,
+      dataCriacao: new Date(),
+      bloqueado: false
+    };
+
+    this.http.post<Card>(`http://localhost:8080/api/cards/coluna/${colunaId}`, card)
+      .subscribe(cardCriado => {
+        const coluna = this.colunas.find(c => c.id === colunaId);
+        if (coluna) {
+          coluna.cards.push(cardCriado);
+        }
+        this.novoCardTitulo = '';
+        this.novoCardDescricao = '';
+        this.fecharModalCard();
+      });
+  }
+
+  // -------- Modais --------
+  abrirModalBoard() { this.showBoardModal = true; }
+  fecharModalBoard() { this.showBoardModal = false; }
+
+  abrirModalCard() { this.showCardModal = true; }
+  fecharModalCard() { this.showCardModal = false; }
+
+  abrirGerenciarColunas() {
+    console.log("Gerenciar colunas clicado");
   }
 
 }

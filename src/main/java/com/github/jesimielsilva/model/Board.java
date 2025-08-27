@@ -28,12 +28,24 @@ public class Board {
     }
 
     // ---------- getters e setters ----------
-    public Long getId() { return id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public Long getId() {
+        return id;
+    }
 
-    public List<Coluna> getColunas() { return colunas; }
-    public void setColunas(List<Coluna> colunas) { this.colunas = colunas; }
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public List<Coluna> getColunas() {
+        return colunas;
+    }
+    public void setColunas(List<Coluna> colunas) {
+        this.colunas = (colunas != null) ? colunas : new ArrayList<>();
+    }
 
     public void adicionarColuna(Coluna coluna) {
         coluna.setBoard(this);

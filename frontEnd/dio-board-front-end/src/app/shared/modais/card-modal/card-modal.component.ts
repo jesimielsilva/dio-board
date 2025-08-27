@@ -6,32 +6,33 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./card-modal.component.css']
 })
 export class CardModalComponent {
-
-  @Input() isOpen = false;
-  @Output() closed = new EventEmitter<void>();
-  @Output() created = new EventEmitter<{ title: string, description: string }>();
-  @Output() save = new EventEmitter<{ titulo: string; descricao: string }>();
   
+  @Input() isOpen = false; // controla se modal aparece
+  @Input() columnId!: string; // para saber em qual coluna criar
+
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() create = new EventEmitter<any>();
+
   cardTitle: string = '';
   cardDescription: string = '';
 
-  createCard() {
-    if (this.cardTitle.trim()) {
-      this.created.emit({ title: this.cardTitle, description: this.cardDescription });
-      this.close();
-    }
+  close() {
+    this.isOpen = false;
+    this.closeModal.emit();
   }
 
-  close() {
-    this.closed.emit();
+  createCard() {
+    if (!this.cardTitle.trim()) return;
+
+    this.create.emit({
+      title: this.cardTitle,
+      description: this.cardDescription,
+      columnId: this.columnId
+    });
+
     this.cardTitle = '';
     this.cardDescription = '';
-  }
-
-  salvar() {
-    if (this.cardTitle.trim()) {
-      this.save.emit({ titulo: this.cardTitle, descricao: this.cardDescription });
-    }
+    this.close();
   }
 
 }
