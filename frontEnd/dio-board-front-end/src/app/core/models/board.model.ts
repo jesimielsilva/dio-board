@@ -1,5 +1,5 @@
 export interface Card {
-  id: string;
+  id?: number;
   titulo: string;
   descricao: string;
   dataCriacao: Date;
@@ -8,7 +8,7 @@ export interface Card {
 }
 
 export interface Coluna {
-  id: string;
+  id?: number;
   nome: string;
   ordem: number;
   tipo: 'Inicial' | 'Pendente' | 'Final' | 'Cancelamento';
@@ -16,7 +16,7 @@ export interface Coluna {
 }
 
 export interface Board {
-  id: string;
+  id?: number;
   nome: string;
   colunas: Coluna[];
 }
