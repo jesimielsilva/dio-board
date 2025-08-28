@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Board, Card, Coluna } from 'src/app/core/models/board.model';
+import { BoardService } from 'src/app/core/services/board.service';
 import { CardService } from 'src/app/core/services/card.service';
 
 @Component({
@@ -9,12 +10,14 @@ import { CardService } from 'src/app/core/services/card.service';
 })
 export class TelaBoardComponent {
   
-  @Input() board: any;
-  @Output() cardAdicionado = new EventEmitter<any>();
+ @Input() board!: Board;
+  @Output() cardAdicionado = new EventEmitter<{ card: Card; coluna: Coluna }>();
 
   isModalOpen = false;
   cardTitle = '';
   cardDescription = '';
+
+  constructor(private boardService: BoardService) {}
 
   abrirModal() {
     this.isModalOpen = true;
@@ -27,25 +30,35 @@ export class TelaBoardComponent {
   }
 
   criarCard() {
-    if (!this.cardTitle.trim()) return;
+    if (!this.cardTitle.trim() || !this.board.colunas || this.board.colunas.length === 0) return;
 
-    const novoCard = {
-      id: Date.now(),
+    const primeiraColuna = this.board.colunas[0];
+
+    if (!primeiraColuna.cards) {
+      primeiraColuna.cards = []; // garante que seja array
+    }
+
+    const novoCard: Partial<Card> = {
       titulo: this.cardTitle,
       descricao: this.cardDescription,
       dataCriacao: new Date(),
       bloqueado: false
     };
 
-    if (this.board.colunas.length > 0) {
-      this.board.colunas[0].cards.push(novoCard);
-      this.cardAdicionado.emit({ card: novoCard, coluna: this.board.colunas[0] });
-    }
+    this.boardService.createCard(primeiraColuna.id!, novoCard).subscribe({
+      next: (cardCriado) => {
+        // 👇 garante que adicionamos no array e não substituímos por objeto
+        primeiraColuna.cards = [...(primeiraColuna.cards || []), cardCriado];
 
-    this.fecharModal();
+        this.cardAdicionado.emit({ card: cardCriado, coluna: primeiraColuna });
+        this.fecharModal();
+      },
+      error: (err) => console.error('Erro ao criar card:', err)
+    });
   }
 
-  abrirDetalhesCard(card: any, col: any) {
+
+  abrirDetalhesCard(card: Card, col: Coluna) {
     console.log("Abrir detalhes do card:", card, "na coluna:", col.nome);
   }
 }

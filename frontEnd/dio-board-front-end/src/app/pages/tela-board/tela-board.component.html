@@ -13,7 +13,7 @@
 
       <div class="column__body">
         <!-- cards da coluna -->
-        <div *ngFor="let card of col.cards" class="kanban-card" (click)="abrirDetalhesCard(card, col)">
+        <div *ngFor="let card of col.cards || []" class="kanban-card" (click)="abrirDetalhesCard(card, col)">
           <div class="card__title">{{ card.titulo }}</div>
           <div class="card__desc">{{ card.descricao }}</div>
           <div class="card__meta">Criado em: {{ card.dataCriacao | date:'dd/MM/yyyy' }}</div>

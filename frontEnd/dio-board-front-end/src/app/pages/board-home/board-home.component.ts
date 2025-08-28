@@ -45,13 +45,22 @@ export class BoardHomeComponent {
   }
 
   selecionarBoard() {
-    if (this.boardSelecionado) {
-      this.boardService.getBoardById(this.boardSelecionado).subscribe(board => {
-        this.boardAtual = board;
-        this.colunas = board.colunas || [];
-      });
-    }
+  if (this.boardSelecionado) {
+    this.boardService.getBoardById(this.boardSelecionado).subscribe(board => {
+      this.boardAtual = board;
+      // se o backend não retorna colunas, carregar separadamente
+      if (!board.colunas || board.colunas.length === 0) {
+        this.boardService.getColunas(board.id!).subscribe(colunas => {
+          this.colunas = colunas;
+          this.boardAtual!.colunas = colunas;
+        });
+      } else {
+        this.colunas = board.colunas;
+      }
+    });
   }
+}
+
 
   salvarBoard(board: Board) {
     // já vem do backend com id correto

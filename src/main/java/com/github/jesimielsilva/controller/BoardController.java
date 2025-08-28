@@ -27,8 +27,14 @@ public class BoardController {
         return boardService.listarTodos();
     }
 
+//    @GetMapping("/{id}")
+//    public Board buscarBoard(@PathVariable Long id) {
+//        return boardService.buscarPorId(id);
+//    }
+
     @GetMapping("/{id}")
-    public Board buscarBoard(@PathVariable Long id) {
+    public Board getBoardById(@PathVariable Long id) {
         return boardService.buscarPorId(id);
     }
+
 }
