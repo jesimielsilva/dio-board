@@ -1,5 +1,6 @@
 package com.github.jesimielsilva.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,9 @@ public class Card {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coluna_id", nullable = false)
+    @JsonBackReference("coluna-cards")
     private Coluna coluna;
+
 
     public Card() {}
 

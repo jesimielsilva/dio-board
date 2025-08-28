@@ -1,5 +1,6 @@
 package com.github.jesimielsilva.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -13,21 +14,14 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nome;
 
-    // Um board é composto por colunas
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @OrderBy("ordem ASC") // garante a ordem correta das colunas
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("board-colunas")
     private List<Coluna> colunas = new ArrayList<>();
 
-    public Board() {}
-
-    public Board(String nome) {
-        this.nome = nome;
-    }
-
-    // ---------- getters e setters ----------
+    // construtores, getters e setters
     public Long getId() {
         return id;
     }
@@ -35,7 +29,6 @@ public class Board {
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -44,11 +37,9 @@ public class Board {
         return colunas;
     }
     public void setColunas(List<Coluna> colunas) {
-        this.colunas = (colunas != null) ? colunas : new ArrayList<>();
-    }
-
-    public void adicionarColuna(Coluna coluna) {
-        coluna.setBoard(this);
-        this.colunas.add(coluna);
+        this.colunas = colunas;
+        for (Coluna coluna : colunas) {
+            coluna.setBoard(this); // garante consistência bidirecional
+        }
     }
 }

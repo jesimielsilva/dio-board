@@ -2,7 +2,7 @@ export interface Card {
   id?: number;
   titulo: string;
   descricao: string;
-  dataCriacao: Date;
+  dataCriacao: string | Date;
   bloqueado: boolean;
   motivoBloqueio?: string;
 }

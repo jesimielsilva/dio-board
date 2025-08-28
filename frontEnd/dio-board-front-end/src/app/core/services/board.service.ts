@@ -1,39 +1,46 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Board } from '../models/board.model';
+import { Board, Card, Coluna } from '../models/board.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BoardService {
 
-  private apiUrl = 'http://localhost:8080/api/boards';
+   private api = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) {}
 
-  // Buscar todos os boards
+  // Boards
   getBoards(): Observable<Board[]> {
-    return this.http.get<Board[]>(this.apiUrl);
+    return this.http.get<Board[]>(`${this.api}/boards`);
   }
 
-  // Criar um novo board
   createBoard(board: Partial<Board>): Observable<Board> {
-    return this.http.post<Board>(this.apiUrl, board);
+    return this.http.post<Board>(`${this.api}/boards`, board);
   }
 
-  // Buscar um board específico
-  getBoardById(id: number): Observable<Board> {
-    return this.http.get<Board>(`${this.apiUrl}/${id}`);
+  // **Adicione este método**
+  getBoardById(boardId: number): Observable<Board> {
+    return this.http.get<Board>(`${this.api}/boards/${boardId}`);
   }
 
-  // Atualizar um board
-  updateBoard(board: Board): Observable<Board> {
-    return this.http.put<Board>(`${this.apiUrl}/${board.id}`, board);
+  // Colunas
+  getColunas(boardId: number): Observable<Coluna[]> {
+    return this.http.get<Coluna[]>(`${this.api}/boards/${boardId}`);
   }
 
-  // Deletar um board
-  deleteBoard(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  createColuna(boardId: number, coluna: Partial<Coluna>): Observable<Coluna> {
+    return this.http.post<Coluna>(`${this.api}/boards/${boardId}/colunas`, coluna);
+  }
+
+  // Cards
+  createCard(colunaId: number, card: Partial<Card>): Observable<Card> {
+    return this.http.post<Card>(`${this.api}/colunas/${colunaId}/cards`, card);
+  }
+
+  getCards(colunaId: number): Observable<Card[]> {
+    return this.http.get<Card[]>(`${this.api}/colunas/${colunaId}/cards`);
   }
 }
