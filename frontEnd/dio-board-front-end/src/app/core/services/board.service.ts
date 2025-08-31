@@ -37,10 +37,11 @@ export class BoardService {
 
   // Cards
   createCard(colunaId: number, card: Partial<Card>): Observable<Card> {
-    return this.http.post<Card>(`${this.api}/colunas/${colunaId}/cards`, card);
+    return this.http.post<Card>(`${this.api}/cards/coluna/${colunaId}`, card);
   }
 
   getCards(colunaId: number): Observable<Card[]> {
-    return this.http.get<Card[]>(`${this.api}/colunas/${colunaId}/cards`);
+    return this.http.get<Card[]>(`${this.api}/cards/coluna/${colunaId}`);
   }
+
 }
