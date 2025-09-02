@@ -44,4 +44,9 @@ export class BoardService {
     return this.http.get<Card[]>(`${this.api}/cards/coluna/${colunaId}`);
   }
 
+  // BoardService
+  moverCard(cardId: number, novaColunaId: number): Observable<Card> {
+    return this.http.put<Card>(`${this.api}/cards/${cardId}/mover/${novaColunaId}`, {});
+  }
+
 }

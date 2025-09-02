@@ -7,4 +7,5 @@ import java.util.List;
 public interface CardService {
     Card criarCard(Long colunaId, Card card);
     List<Card> listarCardsPorColuna(Long colunaId);
+    Card moverCard(Long cardId, Long moverColunaId);
 }
