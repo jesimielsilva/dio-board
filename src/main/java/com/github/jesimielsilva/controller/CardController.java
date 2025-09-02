@@ -2,6 +2,7 @@ package com.github.jesimielsilva.controller;
 
 import com.github.jesimielsilva.model.Card;
 import com.github.jesimielsilva.service.CardService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,4 +27,13 @@ public class CardController {
     public List<Card> listarCardsPorColuna(@PathVariable Long colunaId) {
         return cardService.listarCardsPorColuna(colunaId);
     }
+
+    @PutMapping("/{cardId}/mover/{novaColunaId}")
+    public ResponseEntity<Card> moverCard(
+            @PathVariable Long cardId,
+            @PathVariable Long novaColunaId) {
+        return ResponseEntity.ok(cardService.moverCard(cardId, novaColunaId));
+    }
+
+
 }

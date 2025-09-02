@@ -35,4 +35,17 @@ public class CardServiceImpl implements CardService {
     public List<Card> listarCardsPorColuna(Long colunaId) {
         return cardRepository.findByColunaId(colunaId);
     }
+
+    @Override
+    public Card moverCard(Long cardId, Long novaColunaId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card não encontrado"));
+
+        Coluna novaColuna = colunaRepository.findById(novaColunaId)
+                .orElseThrow(() -> new RuntimeException("Coluna não encontrada"));
+
+        card.setColuna(novaColuna);
+        return cardRepository.save(card);
+    }
+
 }

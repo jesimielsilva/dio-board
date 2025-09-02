@@ -11,9 +11,18 @@
         <span class="badge" [ngClass]="'badge--' + col.tipo">{{ col.tipo }}</span>
       </div>
 
-      <div class="column__body">
-        <!-- cards da coluna -->
-        <div *ngFor="let card of col.cards || []" class="kanban-card" (click)="abrirDetalhesCard(card, col)">
+      <div
+        class="column__body"
+        cdkDropList
+        [id]="'coluna-' + col.id"
+        [cdkDropListData]="col.cards"
+        [cdkDropListConnectedTo]="connectedLists"
+        (cdkDropListDropped)="drop($event, col)">
+        
+        <div *ngFor="let card of col.cards || []"
+             class="kanban-card"
+             cdkDrag
+             (click)="abrirDetalhesCard(card, col)">
           <div class="card__title">{{ card.titulo }}</div>
           <div class="card__desc">{{ card.descricao }}</div>
           <div class="card__meta">Criado em: {{ card.dataCriacao | date:'dd/MM/yyyy' }}</div>
@@ -24,7 +33,7 @@
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL DE CRIAÇÃO DE CARD -->
 <div class="modal-overlay" *ngIf="isModalOpen">
   <div class="modal-content">
     <div class="modal-header">Criar Novo Card</div>

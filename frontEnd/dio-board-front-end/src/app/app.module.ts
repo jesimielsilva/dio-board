@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BoardHomeComponent } from './pages/board-home/board-home.component';
 import { BoardModalComponent } from './shared/modais/board-modal/board-modal.component';
 import { CardModalComponent } from './shared/modais/card-modal/card-modal.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CardModalComponent } from './shared/modais/card-modal/card-modal.compon
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]
